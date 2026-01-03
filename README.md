@@ -5,6 +5,10 @@
 [Claude Code](https://claude.ai/code) summarized the tips and shared here:
 
 * HTML
-* 2 PNGs
+* Cheat sheets:
+
+![Claude Code Cheat Sheet 1](claude-code-cheat-sheet-1.png)
+
+![Claude Code Cheat Sheet 2](claude-code-cheat-sheet-2.png)
 
 This is based on copyright content 2026 by Ado Kukic from the above blog post.
