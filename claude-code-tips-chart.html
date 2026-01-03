@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Tips - Wall Chart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-dark: #0D0D0F;
+      --bg-card: #18181B;
+      --bg-card-hover: #1F1F23;
+      --claude-orange: #E07B39;
+      --claude-coral: #D4724A;
+      --claude-light: #F5A76C;
+      --text-primary: #FAFAFA;
+      --text-secondary: #A1A1AA;
+      --text-muted: #71717A;
+      --border: #27272A;
+      --accent-blue: #60A5FA;
+      --accent-green: #4ADE80;
+      --accent-purple: #A78BFA;
+      --accent-pink: #F472B6;
+      --accent-cyan: #22D3EE;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+
+    .page {
+      width: 816px;
+      height: auto;
+      min-height: 700px;
+      padding: 32px 32px 48px 32px;
+      background: var(--bg-dark);
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+    }
+
+    .page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(224, 123, 57, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(212, 114, 74, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--claude-orange), var(--claude-coral));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: white;
+      box-shadow: 0 4px 20px rgba(224, 123, 57, 0.3);
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--claude-orange), var(--claude-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .page-indicator {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 6px 14px;
+      background: var(--bg-card);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+
+    .section:hover {
+      border-color: rgba(224, 123, 57, 0.3);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .icon-orange { background: linear-gradient(135deg, rgba(224, 123, 57, 0.2), rgba(212, 114, 74, 0.1)); color: var(--claude-orange); }
+    .icon-blue { background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(96, 165, 250, 0.1)); color: var(--accent-blue); }
+    .icon-green { background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(74, 222, 128, 0.1)); color: var(--accent-green); }
+    .icon-purple { background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(167, 139, 250, 0.1)); color: var(--accent-purple); }
+    .icon-pink { background: linear-gradient(135deg, rgba(244, 114, 182, 0.2), rgba(244, 114, 182, 0.1)); color: var(--accent-pink); }
+    .icon-cyan { background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(34, 211, 238, 0.1)); color: var(--accent-cyan); }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tips-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .tip-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      background: rgba(224, 123, 57, 0.15);
+      color: var(--claude-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    .tip-text {
+      color: var(--text-secondary);
+    }
+
+    .tip-text strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 6px 0;
+    }
+
+    .footer {
+      position: relative;
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .footer-link {
+      color: var(--claude-orange);
+      text-decoration: none;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .two-col-tips {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+    }
+
+    .badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .badge-new {
+      background: rgba(74, 222, 128, 0.2);
+      color: var(--accent-green);
+    }
+
+    .badge-pro {
+      background: rgba(167, 139, 250, 0.2);
+      color: var(--accent-purple);
+    }
+  </style>
+</head>
+<body>
+  <!-- PAGE 1 -->
+  <div class="page" id="page1">
+    <div class="header">
+      <div class="logo-section">
+        <div class="logo">C</div>
+        <div>
+          <div class="title">Claude Code Cheat Sheet</div>
+          <div class="subtitle">31 Essential Tips for Maximum Productivity</div>
+        </div>
+      </div>
+      <div class="page-indicator">1 / 2</div>
+    </div>
+
+    <div class="grid">
+      <!-- Essential Commands -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-orange">&#9881;</div>
+          <div class="section-title">Essential Commands</div>
+        </div>
+        <ul class="tips-list">
+          <li class="tip">
+            <span class="tip-code">! command</span>
+            <span class="tip-text">Instant bash execution (no token cost)</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code"># prefix</span>
+            <span class="tip-text">Save info to Claude's memory</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">& prefix</span>
+            <span class="tip-text">Send long tasks to Claude on the Web</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">/init</span>
+            <span class="tip-text">Auto-generate <strong>CLAUDE.md</strong> with project context</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">/export</span>
+            <span class="tip-text">Export session to Markdown</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Shortcuts & Navigation -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-blue">&#9000;</div>
+          <div class="section-title">Shortcuts & Navigation</div>
+        </div>
+        <ul class="tips-list">
+          <li class="tip">
+            <span class="tip-code">Esc Esc</span>
+            <span class="tip-text">Rewind/undo last turn</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">/vim</span>
+            <span class="tip-text">Enable Vim-style editing</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">Ctrl+S</span>
+            <span class="tip-text">Stash draft prompt (auto-restores)</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">Ctrl+R</span>
+            <span class="tip-text">Reverse search prompt history</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">Tab / Enter</span>
+            <span class="tip-text">Accept predictive follow-ups</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Workflow & Sessions -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-green">&#8634;</div>
+          <div class="section-title">Workflow & Sessions</div>
+        </div>
+        <ul class="tips-list">
+          <li class="tip">
+            <span class="tip-code">--continue</span>
+            <span class="tip-text">Resume last session</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">--resume</span>
+            <span class="tip-text">Pick from past sessions</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">/rename</span>
+            <span class="tip-text">Name session for easy recall</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">claude -p "..."</span>
+            <span class="tip-text">Headless mode for scripts</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">"plan"</span>
+            <span class="tip-text">Analyze & plan before executing</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Thinking & Context -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-purple">&#9733;</div>
+          <div class="section-title">Thinking & Context</div>
+        </div>
+        <ul class="tips-list">
+          <li class="tip">
+            <span class="tip-code">"think"</span>
+            <span class="tip-text">Light reasoning mode</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">"hard" / "ultrathink"</span>
+            <span class="tip-text">Deep reasoning (up to 32k)</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">/context</span>
+            <span class="tip-text">Visualize token usage & space</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">Prune MCP tools</span>
+            <span class="tip-text">Remove unused tools to save context</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">/stats</span>
+            <span class="tip-text">View your activity graph</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Customization -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-pink">&#128161;</div>
+          <div class="section-title">Customization</div>
+        </div>
+        <ul class="tips-list">
+          <li class="tip">
+            <span class="tip-code">/statusline</span>
+            <span class="tip-text">Configure custom status bar</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">Hooks</span>
+            <span class="tip-text">Trigger actions on events</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">Theme</span>
+            <span class="tip-text">Customize Claude's appearance</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">Keybindings</span>
+            <span class="tip-text">Remap keys for your workflow</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">Notifications</span>
+            <span class="tip-text">Alerts when Claude needs attention</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tools & Extensions -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-cyan">&#128274;</div>
+          <div class="section-title">Tools & Extensions</div>
+        </div>
+        <ul class="tips-list">
+          <li class="tip">
+            <span class="tip-code">Browser</span>
+            <span class="tip-text">Navigate, click, read, fill forms</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">SKILL.md</span>
+            <span class="tip-text">Teach Claude new capabilities</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">Plugins</span>
+            <span class="tip-text">Bundle commands, agents, skills</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">MCP Servers</span>
+            <span class="tip-text">Enable/disable context protocols</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">LSP</span>
+            <span class="tip-text">Instant diagnostics & code nav</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Source: adocomplete.com/advent-of-claude-2025</span>
+      <span>claude.ai/code</span>
+    </div>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="page" id="page2">
+    <div class="header">
+      <div class="logo-section">
+        <div class="logo">C</div>
+        <div>
+          <div class="title">Claude Code Cheat Sheet</div>
+          <div class="subtitle">31 Essential Tips for Maximum Productivity</div>
+        </div>
+      </div>
+      <div class="page-indicator">2 / 2</div>
+    </div>
+
+    <div class="grid">
+      <!-- Parallel Agents -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-purple">&#129302;</div>
+          <div class="section-title">Parallel Agents</div>
+        </div>
+        <ul class="tips-list">
+          <li class="tip">
+            <span class="tip-code">/agents</span>
+            <span class="tip-text">Spawn sub-agents for concurrent tasks</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">200k context</span>
+            <span class="tip-text">Each agent gets full context window</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">MCP Access</span>
+            <span class="tip-text">Full tool access, output merges back</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Advanced Workflows -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon icon-green">&#9881;</div>
+          <div class="section-title">Advanced Workflows</div>
+        </div>
+        <ul class="tips-list">
+          <li class="tip">
+            <span class="tip-code">git diff | claude -p</span>
+            <span class="tip-text">Pipe input to Claude</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">/custom-command</span>
+            <span class="tip-text">Save prompts as slash commands</span>
+          </li>
+          <li class="tip">
+            <span class="tip-code">$ARGUMENTS</span>
+            <span class="tip-text">Pass args to custom commands</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Quick Reference - Commands -->
+      <div class="section full-width" style="background: linear-gradient(135deg, rgba(224, 123, 57, 0.08), rgba(212, 114, 74, 0.04)); border-color: rgba(224, 123, 57, 0.25);">
+        <div class="section-header">
+          <div class="section-icon icon-orange">&#9889;</div>
+          <div class="section-title">Quick Reference - Commands</div>
+        </div>
+        <div class="two-col-tips">
+          <div class="tip">
+            <span class="tip-code">!</span>
+            <span class="tip-text">Instant bash</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">#</span>
+            <span class="tip-text">Save to memory</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">&</span>
+            <span class="tip-text">Send to cloud</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">@</span>
+            <span class="tip-text">Add context</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">/init</span>
+            <span class="tip-text">Auto-generate CLAUDE.md</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">/export</span>
+            <span class="tip-text">Export to Markdown</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">/vim</span>
+            <span class="tip-text">Vim mode</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">/context</span>
+            <span class="tip-text">Token usage</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">/stats</span>
+            <span class="tip-text">Activity graph</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">/statusline</span>
+            <span class="tip-text">Custom status bar</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">/rename</span>
+            <span class="tip-text">Name session</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">/agents</span>
+            <span class="tip-text">Parallel agents</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Reference - Shortcuts -->
+      <div class="section full-width" style="background: linear-gradient(135deg, rgba(96, 165, 250, 0.08), rgba(96, 165, 250, 0.04)); border-color: rgba(96, 165, 250, 0.25);">
+        <div class="section-header">
+          <div class="section-icon icon-blue">&#9000;</div>
+          <div class="section-title">Quick Reference - Shortcuts</div>
+        </div>
+        <div class="two-col-tips">
+          <div class="tip">
+            <span class="tip-code">Esc Esc</span>
+            <span class="tip-text">Undo/rewind</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">Ctrl+R</span>
+            <span class="tip-text">Search history</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">Ctrl+S</span>
+            <span class="tip-text">Stash prompt</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">Tab / Enter</span>
+            <span class="tip-text">Accept suggestion</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">--continue</span>
+            <span class="tip-text">Resume last</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">--resume</span>
+            <span class="tip-text">Pick session</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">"think"</span>
+            <span class="tip-text">Light reasoning</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">"ultrathink"</span>
+            <span class="tip-text">Deep reasoning</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">"plan"</span>
+            <span class="tip-text">Plan mode</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">claude -p</span>
+            <span class="tip-text">Headless mode</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Community -->
+      <div class="section full-width" style="background: linear-gradient(135deg, rgba(74, 222, 128, 0.08), rgba(74, 222, 128, 0.04)); border-color: rgba(74, 222, 128, 0.25);">
+        <div class="section-header">
+          <div class="section-icon icon-green">&#127793;</div>
+          <div class="section-title">Keep Learning!</div>
+        </div>
+        <div class="two-col-tips">
+          <div class="tip">
+            <span class="tip-code">Marketplace</span>
+            <span class="tip-text">Discover community plugins</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">SKILL.md</span>
+            <span class="tip-text">Create custom skills</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">Hooks</span>
+            <span class="tip-text">Automate workflows</span>
+          </div>
+          <div class="tip">
+            <span class="tip-code">Community</span>
+            <span class="tip-text">Share tips & learn from others!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Source: adocomplete.com/advent-of-claude-2025</span>
+      <span>claude.ai/code</span>
+    </div>
+  </div>
+</body>
+</html>
